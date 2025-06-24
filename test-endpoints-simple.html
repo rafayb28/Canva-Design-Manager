@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva API Simple Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        .info { border-left: 4px solid #17a2b8; }
+        .oauth-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Canva API Simple Tester</h1>
+        <p>Test the actual endpoints available in your server.</p>
+
+        <div class="oauth-section">
+            <h3>🔐 OAuth Authentication</h3>
+            <p>First, authenticate with Canva to test the protected endpoints:</p>
+            <button onclick="startOAuth().catch(console.error)">Start OAuth Flow</button>
+            <button onclick="checkAuthStatus().catch(console.error)">Check Auth Status</button>
+            <div id="oauth-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🏥 Health Check</h3>
+            <button onclick="testHealth().catch(console.error)">Test Health Endpoint</button>
+            <div id="health-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 User Profile</h3>
+            <button onclick="testUser().catch(console.error)">Test User Endpoint</button>
+            <div id="user-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎨 Designs</h3>
+            <button onclick="testDesigns().catch(console.error)">Test Designs Endpoint</button>
+            <div id="designs-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📁 Assets</h3>
+            <button onclick="testAssets().catch(console.error)">Test Assets Endpoint</button>
+            <div id="assets-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚪 Logout</h3>
+            <button onclick="testLogout().catch(console.error)">Test Logout</button>
+            <div id="logout-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 All Tests</h3>
+            <button onclick="runAllTests().catch(console.error)">Run All Tests</button>
+            <div id="all-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:3001';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            const statusText = type === 'success' ? 'SUCCESS' : type === 'error' ? 'ERROR' : 'INFO';
+            
+            element.innerHTML += `[${timestamp}] <span class="status ${statusClass}">${statusText}</span> ${message}\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function makeRequest(endpoint, options = {}) {
+            const url = `${BASE_URL}${endpoint}`;
+            const defaultOptions = {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            try {
+                const response = await fetch(url, { ...defaultOptions, ...options });
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    data = { raw: await response.text() };
+                }
+                
+                return {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data,
+                    url: url
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    statusText: 'Network Error',
+                    data: { error: error.message },
+                    url: url
+                };
+            }
+        }
+
+        function startOAuth() {
+            log('oauth-result', 'Starting OAuth flow...', 'info');
+            // Direct redirect to OAuth endpoint
+            window.location.href = `${BASE_URL}/oauth/redirect`;
+        }
+
+        async function checkAuthStatus() {
+            log('oauth-result', 'Checking authentication status...', 'info');
+            const result = await makeRequest('/api/user');
+            if (result.status === 200) {
+                log('oauth-result', '✅ Authenticated successfully!', 'success');
+                log('oauth-result', `User data: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('oauth-result', `❌ Not authenticated: ${result.status} ${result.statusText}`, 'error');
+            }
+        }
+
+        async function testHealth() {
+            log('health-result', 'Testing health endpoint...', 'info');
+            const result = await makeRequest('/health');
+            if (result.status === 200) {
+                log('health-result', '✅ Health check passed!', 'success');
+                log('health-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('health-result', `❌ Health check failed: ${result.status} ${result.statusText}`, 'error');
+            }
+        }
+
+        async function testUser() {
+            log('user-result', 'Testing user endpoint...', 'info');
+            const result = await makeRequest('/api/user');
+            if (result.status === 200) {
+                log('user-result', '✅ User endpoint works!', 'success');
+                log('user-result', `User data: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('user-result', `❌ User endpoint failed: ${result.status} ${result.statusText}`, 'error');
+                log('user-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            }
+        }
+
+        async function testDesigns() {
+            log('designs-result', 'Testing designs endpoint...', 'info');
+            const result = await makeRequest('/api/designs?limit=5');
+            if (result.status === 200) {
+                log('designs-result', '✅ Designs endpoint works!', 'success');
+                log('designs-result', `Designs data: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('designs-result', `❌ Designs endpoint failed: ${result.status} ${result.statusText}`, 'error');
+                log('designs-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            }
+        }
+
+        async function testAssets() {
+            log('assets-result', 'Testing assets endpoint...', 'info');
+            const result = await makeRequest('/api/assets');
+            if (result.status === 200) {
+                log('assets-result', '✅ Assets endpoint works!', 'success');
+                log('assets-result', `Assets data: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('assets-result', `❌ Assets endpoint failed: ${result.status} ${result.statusText}`, 'error');
+                log('assets-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            }
+        }
+
+        async function testLogout() {
+            log('logout-result', 'Testing logout endpoint...', 'info');
+            const result = await makeRequest('/api/logout', { method: 'POST' });
+            if (result.status === 200) {
+                log('logout-result', '✅ Logout endpoint works!', 'success');
+                log('logout-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            } else {
+                log('logout-result', `❌ Logout endpoint failed: ${result.status} ${result.statusText}`, 'error');
+                log('logout-result', `Response: ${JSON.stringify(result.data, null, 2)}`, 'info');
+            }
+        }
+
+        async function runAllTests() {
+            log('all-result', '🧪 Running all tests...', 'info');
+            
+            // Health check
+            const health = await makeRequest('/health');
+            log('all-result', `Health: ${health.status} ${health.statusText}`, 
+                health.status === 200 ? 'success' : 'error');
+            
+            // Auth check
+            const auth = await makeRequest('/api/user');
+            log('all-result', `Auth: ${auth.status} ${auth.statusText}`, 
+                auth.status === 200 ? 'success' : 'error');
+            
+            // Designs
+            const designs = await makeRequest('/api/designs?limit=5');
+            log('all-result', `Designs: ${designs.status} ${designs.statusText}`, 
+                designs.status === 200 ? 'success' : 'error');
+            
+            // Assets
+            const assets = await makeRequest('/api/assets');
+            log('all-result', `Assets: ${assets.status} ${assets.statusText}`, 
+                assets.status === 200 ? 'success' : 'error');
+            
+            log('all-result', '✅ All tests completed!', 'success');
+        }
+
+        // Check if we're returning from OAuth
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                log('oauth-result', '✅ OAuth successful! You can now test the endpoints.', 'success');
+            } else if (urlParams.get('error')) {
+                log('oauth-result', `❌ OAuth failed: ${urlParams.get('error')}`, 'error');
+            }
+        };
+    </script>
+</body>
+</html> 

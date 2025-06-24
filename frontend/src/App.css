@@ -1,0 +1,194 @@
+/* Responsive, clean, professional styles for Design Manager */
+body, html, #root, .app, .App {
+  font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif;
+  background: #f8fafc;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  color: #222;
+}
+
+.app-header, .App-header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 24px 32px 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0 0 16px 16px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: #00b8d9;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.logout-btn, .login-btn {
+  background: #00b8d9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.logout-btn:hover, .login-btn:hover {
+  background: #0097a7;
+}
+
+.app-main {
+  display: flex;
+  min-height: 0;
+  height: calc(100vh - 80px);
+  background: #f8fafc;
+}
+
+.sidebar, .folder-panel {
+  width: 320px;
+  min-width: 260px;
+  background: #fff;
+  border-radius: 16px;
+  margin: 24px 0 24px 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: calc(100vh - 128px);
+}
+
+.content-area {
+  flex: 1;
+  margin: 24px 24px 24px 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  padding: 32px 32px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.loading-screen, .auth-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f8fafc;
+}
+
+.loading-spinner {
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #00b8d9;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-banner {
+  background: #ffeaea;
+  color: #b71c1c;
+  padding: 12px 24px;
+  border-radius: 8px;
+  margin: 16px 32px 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.auth-content {
+  background: #fff;
+  padding: 48px 40px;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.auth-content h1 {
+  color: #00b8d9;
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.auth-content p {
+  color: #444;
+  margin-bottom: 32px;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1100px) {
+  .app-main {
+    flex-direction: column;
+    height: auto;
+  }
+  .sidebar, .folder-panel {
+    width: 100%;
+    margin: 16px 0 0 0;
+    min-width: 0;
+    height: auto;
+  }
+  .content-area {
+    margin: 16px 0 0 0;
+    padding: 16px;
+  }
+}
+@media (max-width: 700px) {
+  .app-header, .App-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 12px 8px 12px;
+  }
+  .content-area {
+    padding: 8px;
+  }
+  .auth-content {
+    padding: 24px 8px;
+  }
+  h1 {
+    font-size: 1.3rem;
+  }
+}
+/* Hide scrollbars for a cleaner look */
+body, .folder-panel-content, .content-area {
+  scrollbar-width: thin;
+  scrollbar-color: #e0e0e0 #f8fafc;
+}
+body::-webkit-scrollbar, .folder-panel-content::-webkit-scrollbar, .content-area::-webkit-scrollbar {
+  width: 8px;
+  background: #f8fafc;
+}
+body::-webkit-scrollbar-thumb, .folder-panel-content::-webkit-scrollbar-thumb, .content-area::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 8px;
+}

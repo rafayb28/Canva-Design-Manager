@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Simple Test</h1>
+    <button onclick="alert('Button clicked!')">Test Alert</button>
+    <button onclick="console.log('Console test')">Console Test</button>
+    <button onclick="testFetch()">Fetch Test</button>
+    
+    <div id="output"></div>
+
+    <script>
+        console.log('Script loaded');
+        
+        function testFetch() {
+            console.log('Fetch function called');
+            document.getElementById('output').innerHTML = 'Fetch function called';
+            
+            fetch('http://localhost:3001/health')
+                .then(response => {
+                    console.log('Response:', response);
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Data:', data);
+                    document.getElementById('output').innerHTML = 'Success: ' + data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('output').innerHTML = 'Error: ' + error.message;
+                });
+        }
+        
+        // Test on page load
+        window.onload = function() {
+            console.log('Page loaded');
+            document.getElementById('output').innerHTML = 'Page loaded successfully';
+        };
+    </script>
+</body>
+</html> 

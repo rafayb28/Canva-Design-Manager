@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; }
+        #result { background: #f0f0f0; padding: 10px; margin: 10px 0; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    <button onclick="testHealth()">Test Health</button>
+    <button onclick="testDirect()">Test Direct Fetch</button>
+    <button onclick="testCORS()">Test CORS</button>
+    <div id="result"></div>
+
+    <script>
+        function log(message) {
+            document.getElementById('result').textContent += message + '\n';
+        }
+
+        async function testHealth() {
+            log('Testing health endpoint...');
+            try {
+                const response = await fetch('http://localhost:3001/health', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                log(`Status: ${response.status}`);
+                const data = await response.text();
+                log(`Response: ${data}`);
+            } catch (error) {
+                log(`Error: ${error.message}`);
+            }
+        }
+
+        async function testDirect() {
+            log('Testing direct fetch...');
+            try {
+                const response = await fetch('http://localhost:3001/health');
+                log(`Status: ${response.status}`);
+                const data = await response.text();
+                log(`Response: ${data}`);
+            } catch (error) {
+                log(`Error: ${error.message}`);
+            }
+        }
+
+        async function testCORS() {
+            log('Testing CORS preflight...');
+            try {
+                const response = await fetch('http://localhost:3001/health', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'http://localhost:8000'
+                    }
+                });
+                log(`CORS Status: ${response.status}`);
+                log(`CORS Headers: ${JSON.stringify([...response.headers.entries()])}`);
+            } catch (error) {
+                log(`CORS Error: ${error.message}`);
+            }
+        }
+
+        // Test on page load
+        window.onload = function() {
+            log('Page loaded. Click buttons to test.');
+        };
+    </script>
+</body>
+</html> 

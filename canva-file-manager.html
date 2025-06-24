@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva File Manager - Demo</title>
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Material-UI -->
+    <script src="https://unpkg.com/@mui/material@5.14.20/umd/material-ui.development.js"></script>
+    <script src="https://unpkg.com/@mui/icons-material@5.14.19/index.js"></script>
+    <script src="https://unpkg.com/@emotion/react@11.11.1/dist/emotion-react.umd.min.js"></script>
+    <script src="https://unpkg.com/@emotion/styled@11.11.0/dist/emotion-styled.umd.min.js"></script>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #00C4CC 0%, #0088CC 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .demo-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .demo-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .demo-toolbar {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .demo-grid {
+            flex: 1;
+            padding: 24px;
+            overflow: auto;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-button {
+            background: #00C4CC;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .demo-button:hover {
+            background: #0088CC;
+        }
+        
+        .demo-input {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .demo-folder-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .demo-folder-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .demo-folder-item.selected {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .demo-design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .demo-design-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .demo-design-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .demo-thumbnail {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(45deg, #00C4CC, #0088CC);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .demo-design-info {
+            padding: 12px;
+        }
+        
+        .demo-design-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .demo-design-date {
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        // Mock data for demonstration
+        const mockFolders = [
+            { id: 'home', name: '🏠 Home', icon: '🏠' },
+            { id: 'starred', name: '⭐ Starred', icon: '⭐' },
+            { id: 'shared', name: '☁️ Shared with me', icon: '☁️' },
+            { id: 'folder1', name: '📁 Marketing', icon: '📁' },
+            { id: 'folder2', name: '📁 Social Media', icon: '📁' },
+            { id: 'folder3', name: '📁 Brand Assets', icon: '📁' },
+        ];
+
+        const mockDesigns = [
+            { id: '1', title: 'Social Media Post', createdAt: '2024-01-15', type: 'Social Media' },
+            { id: '2', title: 'Business Card', createdAt: '2024-01-14', type: 'Print' },
+            { id: '3', title: 'Logo Design', createdAt: '2024-01-13', type: 'Branding' },
+            { id: '4', title: 'Presentation Template', createdAt: '2024-01-12', type: 'Presentation' },
+            { id: '5', title: 'Email Header', createdAt: '2024-01-11', type: 'Email' },
+            { id: '6', title: 'Banner Ad', createdAt: '2024-01-10', type: 'Advertising' },
+        ];
+
+        // Simple React-like component system for demo
+        function createElement(type, props, ...children) {
+            const element = document.createElement(type);
+            
+            if (props) {
+                Object.keys(props).forEach(key => {
+                    if (key === 'onClick') {
+                        element.addEventListener('click', props[key]);
+                    } else if (key === 'className') {
+                        element.className = props[key];
+                    } else if (key.startsWith('on')) {
+                        const eventName = key.toLowerCase().substring(2);
+                        element.addEventListener(eventName, props[key]);
+                    } else {
+                        element.setAttribute(key, props[key]);
+                    }
+                });
+            }
+            
+            children.forEach(child => {
+                if (typeof child === 'string') {
+                    element.appendChild(document.createTextNode(child));
+                } else if (child) {
+                    element.appendChild(child);
+                }
+            });
+            
+            return element;
+        }
+
+        // Demo Header Component
+        function DemoHeader() {
+            return createElement('div', { className: 'demo-header' },
+                createElement('h1', {}, '🎨 Canva File Manager'),
+                createElement('p', {}, 'Organize and manage your Canva designs with ease')
+            );
+        }
+
+        // Demo Sidebar Component
+        function DemoSidebar({ selectedFolder, onFolderSelect }) {
+            return createElement('div', { className: 'demo-sidebar' },
+                createElement('div', { style: 'padding: 16px; border-bottom: 1px solid #e0e0e0;' },
+                    createElement('h3', { style: 'margin: 0 0 12px 0;' }, 'Folders'),
+                    createElement('input', {
+                        className: 'demo-input',
+                        placeholder: 'Search folders...',
+                        style: 'width: 100%; margin-bottom: 8px;'
+                    }),
+                    createElement('button', {
+                        className: 'demo-button',
+                        style: 'width: 100%;'
+                    }, '➕ Create Folder')
+                ),
+                createElement('div', { style: 'flex: 1; overflow: auto;' },
+                    ...mockFolders.map(folder => 
+                        createElement('div', {
+                            className: `demo-folder-item ${selectedFolder === folder.id ? 'selected' : ''}`,
+                            onClick: () => onFolderSelect(folder.id)
+                        },
+                            createElement('span', {}, folder.icon),
+                            createElement('span', {}, folder.name)
+                        )
+                    )
+                )
+            );
+        }
+
+        // Demo Toolbar Component
+        function DemoToolbar({ selectedCount, totalCount }) {
+            return createElement('div', { className: 'demo-toolbar' },
+                selectedCount > 0 ? 
+                    createElement('span', {}, `${selectedCount} of ${totalCount} selected`) :
+                    createElement('button', { className: 'demo-button' }, 'Select All'),
+                createElement('div', { style: 'flex: 1;' }),
+                createElement('input', {
+                    className: 'demo-input',
+                    placeholder: 'Search designs...',
+                    style: 'width: 300px;'
+                }),
+                createElement('button', { className: 'demo-button' }, '🔍'),
+                createElement('button', { className: 'demo-button' }, '📊'),
+                createElement('button', { className: 'demo-button' }, '⋮')
+            );
+        }
+
+        // Demo Design Grid Component
+        function DemoDesignGrid({ designs, selectedDesigns, onDesignSelect }) {
+            return createElement('div', { className: 'demo-grid' },
+                createElement('div', { style: 'margin-bottom: 24px;' },
+                    createElement('h2', {}, 'Designs'),
+                    createElement('p', { style: 'color: #666;' }, 
+                        `${designs.length} design${designs.length !== 1 ? 's' : ''}${selectedDesigns.size > 0 ? ` • ${selectedDesigns.size} selected` : ''}`
+                    )
+                ),
+                createElement('div', { className: 'demo-design-grid' },
+                    ...designs.map(design => 
+                        createElement('div', {
+                            className: 'demo-design-card',
+                            onClick: () => onDesignSelect(design.id, !selectedDesigns.has(design.id))
+                        },
+                            createElement('div', { className: 'demo-thumbnail' }, '🎨'),
+                            createElement('div', { className: 'demo-design-info' },
+                                createElement('div', { className: 'demo-design-title' }, design.title),
+                                createElement('div', { className: 'demo-design-date' }, design.createdAt)
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // Main App Component
+        function CanvaFileManager() {
+            let selectedFolder = 'home';
+            let selectedDesigns = new Set();
+            
+            function render() {
+                const root = document.getElementById('root');
+                root.innerHTML = '';
+                
+                root.appendChild(createElement('div', { className: 'demo-container' },
+                    DemoHeader(),
+                    createElement('div', { className: 'demo-content' },
+                        DemoSidebar({ 
+                            selectedFolder, 
+                            onFolderSelect: (folderId) => {
+                                selectedFolder = folderId;
+                                selectedDesigns.clear();
+                                render();
+                            }
+                        }),
+                        createElement('div', { className: 'demo-main' },
+                            DemoToolbar({ 
+                                selectedCount: selectedDesigns.size, 
+                                totalCount: mockDesigns.length 
+                            }),
+                            DemoDesignGrid({ 
+                                designs: mockDesigns, 
+                                selectedDesigns,
+                                onDesignSelect: (designId, selected) => {
+                                    if (selected) {
+                                        selectedDesigns.add(designId);
+                                    } else {
+                                        selectedDesigns.delete(designId);
+                                    }
+                                    render();
+                                }
+                            })
+                        )
+                    )
+                ));
+            }
+            
+            render();
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            CanvaFileManager();
+        });
+    </script>
+</body>
+</html> 

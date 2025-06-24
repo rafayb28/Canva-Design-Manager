@@ -1,0 +1,20 @@
+{
+  "short_name": "DesignMgr",
+  "name": "Design Manager",
+  "icons": [
+    {
+      "src": "logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#00b8d9",
+  "background_color": "#f8fafc"
+}

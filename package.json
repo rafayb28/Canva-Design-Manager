@@ -1,0 +1,35 @@
+{
+  "name": "canva-connect-app",
+  "version": "1.0.0",
+  "description": "Canva Connect API Integration",
+  "main": "server.js",
+  "scripts": {
+    "start:backend": "node server-modular.js",
+    "start:frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.2",
+    "@mui/material": "^7.1.2",
+    "axios": "^1.10.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.4",
+    "sqlite3": "^5.1.7",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.14.0"
+  },
+  "author": "Canva Integration",
+  "license": "ISC"
+}
