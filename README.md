@@ -43,6 +43,7 @@ Canva is an excellent tool for content creation, but for power users, freelancer
     - Go to the [Canva Developer Portal](https://www.canva.com/developers/)
     - Create a new app/integration
     - Add the required redirect URLs (e.g., 'http://127.0.0.1:3001/oauth/callback' for URL1)
+    - Allow all permissions under the scopes tab
     - Copy your **Client ID** and **Client Secret**
 
 3.  **Install Dependencies** (This installs for both frontend and backend)
